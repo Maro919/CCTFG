@@ -6,6 +6,8 @@ local nameMap = {}
 local names = {}
 
 local name
+local port
+local interface
 
 local scale = 1
 
@@ -64,6 +66,9 @@ local function handleInput()
                 pulseRedstone()
                 pulseRedstone()
                 rednet.send(idMap[index], nil, "tp")
+                if interface and port then
+                    port.pushItems(peripheral.getName(interface), 2)
+                end
             elseif p3 == 1 then
                 destinations = {}
                 convertDestinations()
@@ -81,6 +86,9 @@ local function handleInput()
                 sleep(2)
                 pulseRedstone()
                 pulseRedstone()
+                if interface and port then
+                    port.pushItems(peripheral.getName(interface), 2)
+                end
             elseif prot == "dns" then
                 if type(msg) == "table" and msg.sType == "lookup response" and msg.sProtocol == "tp" and type(msg.sHostname) == "string" then
                     destinations[sid] = msg.sHostname
@@ -112,7 +120,8 @@ local function main()
         error("Modem not found.", 3)
     end
 
-    local port = peripheral.find("ae2:spatial_io_port")
+    port = peripheral.find("ae2:spatial_io_port")
+    interface = peripheral.find("ae2:interface")
 
     if port then
         name = settings.get("tp.name")
@@ -149,5 +158,3 @@ local function main()
 end
 
 main()
-
---[[ TODO remove entries if not responding ]]--
