@@ -124,6 +124,15 @@ local function main()
     interface = peripheral.find("ae2:interface")
 
     if port then
+        --[[ Return cell to system at startup ]]--
+        if next(port.list()) == 1 then
+            pulseRedstone()
+        end
+        if interface then
+            port.pushItems(peripheral.getName(interface), 2)
+        end
+
+        --[[ Setup teleport name ]]--
         name = settings.get("tp.name")
         if not name or type(name) ~= "string" then
             error("Teleport name not configured.", 3)
@@ -151,7 +160,6 @@ local function main()
     --destinations[os.getComputerID()] = name
     convertDestinations()
     display:update(names)
-    -- TODO return cell to system if stuck in input
 
     --[[ Future hook for secure connection daemon ]]--
     parallel.waitForAny(handleInput)
